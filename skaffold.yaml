@@ -1,0 +1,29 @@
+apiVersion: skaffold/v2beta18
+kind: Config
+build:
+  artifacts:
+    - image: cloud-ide
+      context: .
+      docker:
+        dockerfile: Dockerfile
+    - image: cloud-ide-server
+      context: .
+      docker:
+        dockerfile: server.Dockerfile
+  tagPolicy:
+    gitCommit:
+      ignoreChanges: true
+  local:
+    push: false
+    useBuildkit: true
+    useDockerCLI: true
+deploy:
+  helm:
+    releases:
+      - name: cloud-ide
+        namespace: cloud-ide
+        createNamespace: true
+        chartPath: chart
+        artifactOverrides:
+          image: cloud-ide
+          serverImage: cloud-ide-server

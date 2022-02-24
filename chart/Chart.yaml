@@ -1,0 +1,4 @@
+apiVersion: v1
+name: "cloud-ide"
+description: "Cloud IDE"
+version: 0.1.0

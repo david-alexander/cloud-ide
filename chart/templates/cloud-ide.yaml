@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: cloud-ide
+    role: web
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: cloud-ide
+      role: web
+  template:
+    metadata:
+      labels:
+        app: cloud-ide
+        role: web
+    spec:
+      volumes:
+        - name: source
+          emptyDir: {}
+        # - name: docker-sock
+        #   hostPath:
+        #     path: "/var/run/docker.sock"
+        #     type: File
+      containers:
+      - image: {{ .Values.image }}
+        name: web
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        # startupProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 80
+        #   failureThreshold: 120
+        #   periodSeconds: 1
+        securityContext:
+          privileged: true
+        #   runAsUser: 0
+        volumeMounts:
+        - name: source
+          mountPath: /source
+        # - mountPath: /var/run/docker.sock
+        #   name: docker-sock
+        #   readOnly: false
+      - image: {{ .Values.serverImage }}
+        name: server
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        # startupProbe:
+        #   httpGet:
+        #     path: /
+        #     port: 8080
+        #   failureThreshold: 120
+        #   periodSeconds: 1
+        volumeMounts:
+        - name: source
+          mountPath: /source
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cloud-ide
+    role: web
+  name: web
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    app: cloud-ide
+    role: web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cloud-ide
+    role: server
+  name: server
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: cloud-ide
+    role: web
