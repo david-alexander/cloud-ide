@@ -12,7 +12,7 @@ async function fakeDockerDaemon()
             let parts = line.split('\t');
             if (parts[0] == imageName || parts[0] == `docker.io/library/${imageName}`)
             {
-                return parts[4].trim();
+                return parts[4].trim().split(':')[1];
             }
         }
     
@@ -44,6 +44,11 @@ async function fakeDockerDaemon()
         await util.promisify(childProcess.exec)(`img push ${req.params.image}:${req.query.tag}`);
         res.status(200).end(JSON.stringify({}));
     });
+    // app2.post('/:version/images/:image/tag', async (req, res) => {
+    //     console.log('TAGGING IMAGE', req.params.image, req.query.repo, req.query.tag);
+    //     await util.promisify(childProcess.exec)(`img tag ${req.params.image}:${req.query.tag}`);
+    //     res.status(200).end(JSON.stringify({}));
+    // });
     app2.get('/:version/images/:repo/:image/json', async (req, res) => {
         console.log('REQUESTED IMAGE', req.params.repo, req.params.image);
         let sha = await getImageSha(req.params.repo + '/' + req.params.image);
