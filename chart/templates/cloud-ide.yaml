@@ -23,8 +23,8 @@ spec:
           emptyDir: {}
         - name: containerd-sock
           hostPath:
-            path: "/run/containerd/containerd.sock"
-            type: File
+            path: "/run/containerd/"
+            # type: File
       containers:
       - image: {{ .Values.image }}
         name: web
@@ -43,7 +43,7 @@ spec:
         volumeMounts:
         - name: source
           mountPath: /source
-        - mountPath: /run/containerd/containerd.sock
+        - mountPath: /run/containerd/
           name: containerd-sock
           readOnly: false
       - image: {{ .Values.serverImage }}
