@@ -25,6 +25,9 @@ spec:
           hostPath:
             path: "/run/containerd/"
             # type: File
+        - name: containerd-lib
+          hostPath:
+            path: "/var/lib/containerd/"
       containers:
       - image: {{ .Values.image }}
         name: web
@@ -45,6 +48,9 @@ spec:
           mountPath: /source
         - mountPath: /run/containerd/
           name: containerd-sock
+          readOnly: false
+        - mountPath: /var/lib/containerd/
+          name: containerd-lib
           readOnly: false
       - image: {{ .Values.serverImage }}
         name: server
