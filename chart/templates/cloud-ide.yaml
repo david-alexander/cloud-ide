@@ -21,10 +21,10 @@ spec:
       volumes:
         - name: source
           emptyDir: {}
-        # - name: docker-sock
-        #   hostPath:
-        #     path: "/var/run/docker.sock"
-        #     type: File
+        - name: containerd-sock
+          hostPath:
+            path: "/run/containerd/containerd.sock"
+            type: File
       containers:
       - image: {{ .Values.image }}
         name: web
@@ -39,13 +39,13 @@ spec:
         #   periodSeconds: 1
         securityContext:
           privileged: true
-        #   runAsUser: 0
+          runAsUser: 0
         volumeMounts:
         - name: source
           mountPath: /source
-        # - mountPath: /var/run/docker.sock
-        #   name: docker-sock
-        #   readOnly: false
+        - mountPath: /run/containerd/containerd.sock
+          name: containerd-sock
+          readOnly: false
       - image: {{ .Values.serverImage }}
         name: server
         imagePullPolicy: IfNotPresent
