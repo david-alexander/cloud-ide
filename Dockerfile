@@ -14,7 +14,7 @@ RUN curl -fSL "https://github.com/genuinetools/img/releases/download/v0.5.11/img
 RUN curl -Lo krew.tar.gz https://github.com/kubernetes-sigs/krew/releases/download/v0.4.3/krew-linux_amd64.tar.gz && tar xzvf krew.tar.gz && chmod +x ./krew-linux_amd64 && ./krew-linux_amd64 install krew
 ENV PATH="$PATH:/root/.krew/bin"
 
-RUN krew install hns
+RUN kubectl krew install hns
 
 ADD fs/fake-docker-daemon.js .
 
